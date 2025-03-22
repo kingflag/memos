@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package memos.api.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "gen/api/v1";
+
+// AI Platform service definition
+service AIPlatformService {
+  // Create a new AI platform
+  rpc CreateAIPlatform(CreateAIPlatformRequest) returns (AIPlatform) {
+    option (google.api.http) = {
+      post: "/api/v1/ai-platforms"
+      body: "platform"
+    };
+  }
+  
+  // List all AI platforms
+  rpc ListAIPlatforms(ListAIPlatformsRequest) returns (ListAIPlatformsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/ai-platforms"
+    };
+  }
+  
+  // Get a specific AI platform
+  rpc GetAIPlatform(GetAIPlatformRequest) returns (AIPlatform) {
+    option (google.api.http) = {
+      get: "/api/v1/ai-platforms/{name}"
+    };
+  }
+  
+  // Update an existing AI platform
+  rpc UpdateAIPlatform(UpdateAIPlatformRequest) returns (AIPlatform) {
+    option (google.api.http) = {
+      patch: "/api/v1/ai-platforms/{platform.name}"
+      body: "platform"
+    };
+  }
+  
+  // Delete an AI platform
+  rpc DeleteAIPlatform(DeleteAIPlatformRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/api/v1/ai-platforms/{name}"
+    };
+  }
+}
+
+// AI Platform resource
+message AIPlatform {
+  // The name of the AI platform resource
+  // Format: ai-platforms/{platform_id}
+  string name = 1;
+  
+  // The URL of the AI platform API
+  string url = 2;
+  
+  // The access key for authenticating with the AI platform
+  string access_key = 3;
+  
+  // A user-friendly display name for the AI platform
+  string display_name = 4;
+  
+  // Optional description of the AI platform
+  string description = 5;
+  
+  // Creation timestamp
+  google.protobuf.Timestamp create_time = 6;
+  
+  // Last update timestamp
+  google.protobuf.Timestamp update_time = 7;
+}
+
+// Request message for CreateAIPlatform
+message CreateAIPlatformRequest {
+  // The AI platform to create
+  AIPlatform platform = 1;
+}
+
+// Request message for ListAIPlatforms
+message ListAIPlatformsRequest {
+  // Maximum number of platforms to return
+  int32 page_size = 1;
+  
+  // Page token received from a previous ListAIPlatforms call
+  string page_token = 2;
+}
+
+// Response message for ListAIPlatforms
+message ListAIPlatformsResponse {
+  // The list of AI platforms
+  repeated AIPlatform platforms = 1;
+  
+  // A token to retrieve the next page of results
+  string next_page_token = 2;
+}
+
+// Request message for GetAIPlatform
+message GetAIPlatformRequest {
+  // The name of the AI platform to retrieve
+  // Format: ai-platforms/{platform_id}
+  string name = 1;
+}
+
+// Request message for UpdateAIPlatform
+message UpdateAIPlatformRequest {
+  // The AI platform with updated fields
+  AIPlatform platform = 1;
+  
+  // The list of fields to update
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+// Request message for DeleteAIPlatform
+message DeleteAIPlatformRequest {
+  // The name of the AI platform to delete
+  // Format: ai-platforms/{platform_id}
+  string name = 1;
+}
