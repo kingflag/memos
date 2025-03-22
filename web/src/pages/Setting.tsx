@@ -1,9 +1,11 @@
 import { Option, Select } from "@mui/joy";
-import { CogIcon, DatabaseIcon, KeyIcon, LibraryIcon, LucideIcon, Settings2Icon, UserIcon, UsersIcon } from "lucide-react";
+import { BrainCircuitIcon, CogIcon, DatabaseIcon, KeyIcon, LibraryIcon, LucideIcon, Settings2Icon, UserIcon, UsersIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import MobileHeader from "@/components/MobileHeader";
+// 引入新组件
+import AIPlatformSection from "@/components/Settings/AIPlatformSection";
 import MemberSection from "@/components/Settings/MemberSection";
 import MemoRelatedSettings from "@/components/Settings/MemoRelatedSettings";
 import MyAccountSection from "@/components/Settings/MyAccountSection";
@@ -19,14 +21,14 @@ import { User_Role } from "@/types/proto/api/v1/user_service";
 import { WorkspaceSettingKey } from "@/types/proto/store/workspace_setting";
 import { useTranslate } from "@/utils/i18n";
 
-type SettingSection = "my-account" | "preference" | "member" | "system" | "memo-related" | "storage" | "sso";
+type SettingSection = "my-account" | "preference" | "member" | "system" | "memo-related" | "storage" | "sso" | "ai-platform";
 
 interface State {
   selectedSection: SettingSection;
 }
 
 const BASIC_SECTIONS: SettingSection[] = ["my-account", "preference"];
-const ADMIN_SECTIONS: SettingSection[] = ["member", "system", "memo-related", "storage", "sso"];
+const ADMIN_SECTIONS: SettingSection[] = ["member", "system", "memo-related", "storage", "sso", "ai-platform"];
 const SECTION_ICON_MAP: Record<SettingSection, LucideIcon> = {
   "my-account": UserIcon,
   preference: CogIcon,
@@ -35,6 +37,7 @@ const SECTION_ICON_MAP: Record<SettingSection, LucideIcon> = {
   "memo-related": LibraryIcon,
   storage: DatabaseIcon,
   sso: KeyIcon,
+  "ai-platform": BrainCircuitIcon, // 添加 AI 平台图标
 };
 
 const Setting = observer(() => {
@@ -145,6 +148,8 @@ const Setting = observer(() => {
               <StorageSection />
             ) : state.selectedSection === "sso" ? (
               <SSOSection />
+            ) : state.selectedSection === "ai-platform" ? (
+              <AIPlatformSection />
             ) : null}
           </div>
         </div>

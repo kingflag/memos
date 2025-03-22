@@ -19,3 +19,6 @@ dist
 
 # VSCode settings
 .vscode
+
+node_modules
+web/node_modules

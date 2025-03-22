@@ -223,6 +223,11 @@
     "go-to-home": "回到首页"
   },
   "setting": {
+    "ai-platform": "AI 平台",
+    "ai-platform-section": {
+      "title": "AI 平台管理",
+      "description": "管理并配置您的 AI 平台"
+    },
     "access-token-section": {
       "create-dialog": {
         "create-access-token": "创建令牌",
