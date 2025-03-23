@@ -130,3 +130,17 @@ CREATE TABLE `reaction` (
   `reaction_type` VARCHAR(256) NOT NULL,
   UNIQUE(`creator_id`,`content_id`,`reaction_type`)  
 );
+
+-- ai_platform
+CREATE TABLE `ai_platform` (
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `url` TEXT NOT NULL,
+  `access_key` TEXT NOT NULL,
+  `display_name` TEXT NOT NULL,
+  `description` TEXT NOT NULL DEFAULT '',
+  `created_ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE INDEX `idx_ai_platform_display_name` ON `ai_platform`(`display_name`(255));

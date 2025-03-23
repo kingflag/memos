@@ -33,6 +33,7 @@ type APIV1Service struct {
 	v1pb.UnimplementedWebhookServiceServer
 	v1pb.UnimplementedMarkdownServiceServer
 	v1pb.UnimplementedIdentityProviderServiceServer
+	v1pb.UnimplementedAIPlatformServiceServer
 
 	Secret  string
 	Profile *profile.Profile
