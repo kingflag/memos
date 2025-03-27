@@ -48,10 +48,11 @@ service AIPlatformService {
     };
   }
   
-  // Validate an AI platform
-  rpc ValidateAIPlatform(ValidateAIPlatformRequest) returns (ValidateAIPlatformResponse) {
+  // Generate an answer from the AI platform
+  rpc GenerateAnswer(GenerateAnswerRequest) returns (GenerateAnswerResponse) {
     option (google.api.http) = {
-      post: "/api/v1/ai-platforms/{name}/validate"
+      post: "/api/v1/ai-platforms/{name}/generate"
+      body: "*"
     };
   }
 }
@@ -131,21 +132,15 @@ message DeleteAIPlatformRequest {
   string name = 1;
 }
 
-// Request message for ValidateAIPlatform
-message ValidateAIPlatformRequest {
-  // The name of the AI platform to validate
-  // Format: ai-platforms/{platform_id}
+// Request message for GenerateAnswer
+message GenerateAnswerRequest {
   string name = 1;
+  string prompt = 2;
 }
 
-// Response message for ValidateAIPlatform
-message ValidateAIPlatformResponse {
-  // Whether the platform is valid
-  bool is_valid = 1;
-  
-  // Error message if validation failed
-  string error_message = 2;
-  
-  // Additional validation details
-  map<string, string> validation_details = 3;
+// Response message for GenerateAnswer
+message GenerateAnswerResponse {
+  bool success = 1;
+  string answer = 2;
+  string error_message = 3;
 }

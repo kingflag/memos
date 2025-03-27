@@ -114,27 +114,29 @@ paths:
           type: string
       tags:
         - AIPlatformService
-  /api/v1/ai-platforms/{name}/validate:
+  /api/v1/ai-platforms/{name}/generate:
     post:
-      summary: Validate an AI platform
-      operationId: AIPlatformService_ValidateAIPlatform
+      summary: Generate an answer from the AI platform
+      operationId: AIPlatformService_GenerateAnswer
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1ValidateAIPlatformResponse'
+            $ref: '#/definitions/v1GenerateAnswerResponse'
         default:
           description: An unexpected error response.
           schema:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
         - name: name
-          description: |-
-            The name of the AI platform to validate
-            Format: ai-platforms/{platform_id}
           in: path
           required: true
           type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AIPlatformServiceGenerateAnswerBody'
       tags:
         - AIPlatformService
   /api/v1/ai-platforms/{platform.name}:
@@ -2094,6 +2096,12 @@ paths:
       tags:
         - ResourceService
 definitions:
+  AIPlatformServiceGenerateAnswerBody:
+    type: object
+    properties:
+      prompt:
+        type: string
+    title: Request message for GenerateAnswer
   ListNodeKind:
     type: string
     enum:
@@ -2821,6 +2829,16 @@ definitions:
     properties:
       symbol:
         type: string
+  v1GenerateAnswerResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      answer:
+        type: string
+      errorMessage:
+        type: string
+    title: Response message for GenerateAnswer
   v1HTMLElementNode:
     type: object
     properties:
@@ -3497,21 +3515,6 @@ definitions:
       totalMemoCount:
         type: integer
         format: int32
-  v1ValidateAIPlatformResponse:
-    type: object
-    properties:
-      isValid:
-        type: boolean
-        title: Whether the platform is valid
-      errorMessage:
-        type: string
-        title: Error message if validation failed
-      validationDetails:
-        type: object
-        additionalProperties:
-          type: string
-        title: Additional validation details
-    title: Response message for ValidateAIPlatform
   v1Visibility:
     type: string
     enum:

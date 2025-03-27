@@ -20,12 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AIPlatformService_CreateAIPlatform_FullMethodName   = "/memos.api.v1.AIPlatformService/CreateAIPlatform"
-	AIPlatformService_ListAIPlatforms_FullMethodName    = "/memos.api.v1.AIPlatformService/ListAIPlatforms"
-	AIPlatformService_GetAIPlatform_FullMethodName      = "/memos.api.v1.AIPlatformService/GetAIPlatform"
-	AIPlatformService_UpdateAIPlatform_FullMethodName   = "/memos.api.v1.AIPlatformService/UpdateAIPlatform"
-	AIPlatformService_DeleteAIPlatform_FullMethodName   = "/memos.api.v1.AIPlatformService/DeleteAIPlatform"
-	AIPlatformService_ValidateAIPlatform_FullMethodName = "/memos.api.v1.AIPlatformService/ValidateAIPlatform"
+	AIPlatformService_CreateAIPlatform_FullMethodName = "/memos.api.v1.AIPlatformService/CreateAIPlatform"
+	AIPlatformService_ListAIPlatforms_FullMethodName  = "/memos.api.v1.AIPlatformService/ListAIPlatforms"
+	AIPlatformService_GetAIPlatform_FullMethodName    = "/memos.api.v1.AIPlatformService/GetAIPlatform"
+	AIPlatformService_UpdateAIPlatform_FullMethodName = "/memos.api.v1.AIPlatformService/UpdateAIPlatform"
+	AIPlatformService_DeleteAIPlatform_FullMethodName = "/memos.api.v1.AIPlatformService/DeleteAIPlatform"
+	AIPlatformService_GenerateAnswer_FullMethodName   = "/memos.api.v1.AIPlatformService/GenerateAnswer"
 )
 
 // AIPlatformServiceClient is the client API for AIPlatformService service.
@@ -44,8 +44,8 @@ type AIPlatformServiceClient interface {
 	UpdateAIPlatform(ctx context.Context, in *UpdateAIPlatformRequest, opts ...grpc.CallOption) (*AIPlatform, error)
 	// Delete an AI platform
 	DeleteAIPlatform(ctx context.Context, in *DeleteAIPlatformRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Validate an AI platform
-	ValidateAIPlatform(ctx context.Context, in *ValidateAIPlatformRequest, opts ...grpc.CallOption) (*ValidateAIPlatformResponse, error)
+	// Generate an answer from the AI platform
+	GenerateAnswer(ctx context.Context, in *GenerateAnswerRequest, opts ...grpc.CallOption) (*GenerateAnswerResponse, error)
 }
 
 type aIPlatformServiceClient struct {
@@ -106,10 +106,10 @@ func (c *aIPlatformServiceClient) DeleteAIPlatform(ctx context.Context, in *Dele
 	return out, nil
 }
 
-func (c *aIPlatformServiceClient) ValidateAIPlatform(ctx context.Context, in *ValidateAIPlatformRequest, opts ...grpc.CallOption) (*ValidateAIPlatformResponse, error) {
+func (c *aIPlatformServiceClient) GenerateAnswer(ctx context.Context, in *GenerateAnswerRequest, opts ...grpc.CallOption) (*GenerateAnswerResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ValidateAIPlatformResponse)
-	err := c.cc.Invoke(ctx, AIPlatformService_ValidateAIPlatform_FullMethodName, in, out, cOpts...)
+	out := new(GenerateAnswerResponse)
+	err := c.cc.Invoke(ctx, AIPlatformService_GenerateAnswer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -132,8 +132,8 @@ type AIPlatformServiceServer interface {
 	UpdateAIPlatform(context.Context, *UpdateAIPlatformRequest) (*AIPlatform, error)
 	// Delete an AI platform
 	DeleteAIPlatform(context.Context, *DeleteAIPlatformRequest) (*emptypb.Empty, error)
-	// Validate an AI platform
-	ValidateAIPlatform(context.Context, *ValidateAIPlatformRequest) (*ValidateAIPlatformResponse, error)
+	// Generate an answer from the AI platform
+	GenerateAnswer(context.Context, *GenerateAnswerRequest) (*GenerateAnswerResponse, error)
 	mustEmbedUnimplementedAIPlatformServiceServer()
 }
 
@@ -159,8 +159,8 @@ func (UnimplementedAIPlatformServiceServer) UpdateAIPlatform(context.Context, *U
 func (UnimplementedAIPlatformServiceServer) DeleteAIPlatform(context.Context, *DeleteAIPlatformRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAIPlatform not implemented")
 }
-func (UnimplementedAIPlatformServiceServer) ValidateAIPlatform(context.Context, *ValidateAIPlatformRequest) (*ValidateAIPlatformResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ValidateAIPlatform not implemented")
+func (UnimplementedAIPlatformServiceServer) GenerateAnswer(context.Context, *GenerateAnswerRequest) (*GenerateAnswerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateAnswer not implemented")
 }
 func (UnimplementedAIPlatformServiceServer) mustEmbedUnimplementedAIPlatformServiceServer() {}
 func (UnimplementedAIPlatformServiceServer) testEmbeddedByValue()                           {}
@@ -273,20 +273,20 @@ func _AIPlatformService_DeleteAIPlatform_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AIPlatformService_ValidateAIPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ValidateAIPlatformRequest)
+func _AIPlatformService_GenerateAnswer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateAnswerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AIPlatformServiceServer).ValidateAIPlatform(ctx, in)
+		return srv.(AIPlatformServiceServer).GenerateAnswer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AIPlatformService_ValidateAIPlatform_FullMethodName,
+		FullMethod: AIPlatformService_GenerateAnswer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AIPlatformServiceServer).ValidateAIPlatform(ctx, req.(*ValidateAIPlatformRequest))
+		return srv.(AIPlatformServiceServer).GenerateAnswer(ctx, req.(*GenerateAnswerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -319,8 +319,8 @@ var AIPlatformService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AIPlatformService_DeleteAIPlatform_Handler,
 		},
 		{
-			MethodName: "ValidateAIPlatform",
-			Handler:    _AIPlatformService_ValidateAIPlatform_Handler,
+			MethodName: "GenerateAnswer",
+			Handler:    _AIPlatformService_GenerateAnswer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

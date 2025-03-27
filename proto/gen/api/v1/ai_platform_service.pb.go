@@ -440,30 +440,29 @@ func (x *DeleteAIPlatformRequest) GetName() string {
 	return ""
 }
 
-// Request message for ValidateAIPlatform
-type ValidateAIPlatformRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the AI platform to validate
-	// Format: ai-platforms/{platform_id}
-	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+// Request message for GenerateAnswer
+type GenerateAnswerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Prompt        string                 `protobuf:"bytes,2,opt,name=prompt,proto3" json:"prompt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ValidateAIPlatformRequest) Reset() {
-	*x = ValidateAIPlatformRequest{}
+func (x *GenerateAnswerRequest) Reset() {
+	*x = GenerateAnswerRequest{}
 	mi := &file_api_v1_ai_platform_service_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ValidateAIPlatformRequest) String() string {
+func (x *GenerateAnswerRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ValidateAIPlatformRequest) ProtoMessage() {}
+func (*GenerateAnswerRequest) ProtoMessage() {}
 
-func (x *ValidateAIPlatformRequest) ProtoReflect() protoreflect.Message {
+func (x *GenerateAnswerRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_api_v1_ai_platform_service_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -475,45 +474,49 @@ func (x *ValidateAIPlatformRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ValidateAIPlatformRequest.ProtoReflect.Descriptor instead.
-func (*ValidateAIPlatformRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GenerateAnswerRequest.ProtoReflect.Descriptor instead.
+func (*GenerateAnswerRequest) Descriptor() ([]byte, []int) {
 	return file_api_v1_ai_platform_service_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ValidateAIPlatformRequest) GetName() string {
+func (x *GenerateAnswerRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-// Response message for ValidateAIPlatform
-type ValidateAIPlatformResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Whether the platform is valid
-	IsValid bool `protobuf:"varint,1,opt,name=is_valid,json=isValid,proto3" json:"is_valid,omitempty"`
-	// Error message if validation failed
-	ErrorMessage string `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
-	// Additional validation details
-	ValidationDetails map[string]string `protobuf:"bytes,3,rep,name=validation_details,json=validationDetails,proto3" json:"validation_details,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+func (x *GenerateAnswerRequest) GetPrompt() string {
+	if x != nil {
+		return x.Prompt
+	}
+	return ""
 }
 
-func (x *ValidateAIPlatformResponse) Reset() {
-	*x = ValidateAIPlatformResponse{}
+// Response message for GenerateAnswer
+type GenerateAnswerResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Answer        string                 `protobuf:"bytes,2,opt,name=answer,proto3" json:"answer,omitempty"`
+	ErrorMessage  string                 `protobuf:"bytes,3,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateAnswerResponse) Reset() {
+	*x = GenerateAnswerResponse{}
 	mi := &file_api_v1_ai_platform_service_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ValidateAIPlatformResponse) String() string {
+func (x *GenerateAnswerResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ValidateAIPlatformResponse) ProtoMessage() {}
+func (*GenerateAnswerResponse) ProtoMessage() {}
 
-func (x *ValidateAIPlatformResponse) ProtoReflect() protoreflect.Message {
+func (x *GenerateAnswerResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_api_v1_ai_platform_service_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -525,30 +528,30 @@ func (x *ValidateAIPlatformResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ValidateAIPlatformResponse.ProtoReflect.Descriptor instead.
-func (*ValidateAIPlatformResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GenerateAnswerResponse.ProtoReflect.Descriptor instead.
+func (*GenerateAnswerResponse) Descriptor() ([]byte, []int) {
 	return file_api_v1_ai_platform_service_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *ValidateAIPlatformResponse) GetIsValid() bool {
+func (x *GenerateAnswerResponse) GetSuccess() bool {
 	if x != nil {
-		return x.IsValid
+		return x.Success
 	}
 	return false
 }
 
-func (x *ValidateAIPlatformResponse) GetErrorMessage() string {
+func (x *GenerateAnswerResponse) GetAnswer() string {
 	if x != nil {
-		return x.ErrorMessage
+		return x.Answer
 	}
 	return ""
 }
 
-func (x *ValidateAIPlatformResponse) GetValidationDetails() map[string]string {
+func (x *GenerateAnswerResponse) GetErrorMessage() string {
 	if x != nil {
-		return x.ValidationDetails
+		return x.ErrorMessage
 	}
-	return nil
+	return ""
 }
 
 var File_api_v1_ai_platform_service_proto protoreflect.FileDescriptor
@@ -585,23 +588,21 @@ const file_api_v1_ai_platform_service_proto_rawDesc = "" +
 	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\"-\n" +
 	"\x17DeleteAIPlatformRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\"/\n" +
-	"\x19ValidateAIPlatformRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\"\x92\x02\n" +
-	"\x1aValidateAIPlatformResponse\x12\x19\n" +
-	"\bis_valid\x18\x01 \x01(\bR\aisValid\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\x12n\n" +
-	"\x12validation_details\x18\x03 \x03(\v2?.memos.api.v1.ValidateAIPlatformResponse.ValidationDetailsEntryR\x11validationDetails\x1aD\n" +
-	"\x16ValidationDetailsEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x012\xa0\x06\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"C\n" +
+	"\x15GenerateAnswerRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
+	"\x06prompt\x18\x02 \x01(\tR\x06prompt\"o\n" +
+	"\x16GenerateAnswerResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x16\n" +
+	"\x06answer\x18\x02 \x01(\tR\x06answer\x12#\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage2\x97\x06\n" +
 	"\x11AIPlatformService\x12{\n" +
 	"\x10CreateAIPlatform\x12%.memos.api.v1.CreateAIPlatformRequest\x1a\x18.memos.api.v1.AIPlatform\"&\x82\xd3\xe4\x93\x02 :\bplatform\"\x14/api/v1/ai-platforms\x12|\n" +
 	"\x0fListAIPlatforms\x12$.memos.api.v1.ListAIPlatformsRequest\x1a%.memos.api.v1.ListAIPlatformsResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/api/v1/ai-platforms\x12r\n" +
 	"\rGetAIPlatform\x12\".memos.api.v1.GetAIPlatformRequest\x1a\x18.memos.api.v1.AIPlatform\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/api/v1/ai-platforms/{name}\x12\x8b\x01\n" +
 	"\x10UpdateAIPlatform\x12%.memos.api.v1.UpdateAIPlatformRequest\x1a\x18.memos.api.v1.AIPlatform\"6\x82\xd3\xe4\x93\x020:\bplatform2$/api/v1/ai-platforms/{platform.name}\x12v\n" +
-	"\x10DeleteAIPlatform\x12%.memos.api.v1.DeleteAIPlatformRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/api/v1/ai-platforms/{name}\x12\x95\x01\n" +
-	"\x12ValidateAIPlatform\x12'.memos.api.v1.ValidateAIPlatformRequest\x1a(.memos.api.v1.ValidateAIPlatformResponse\",\x82\xd3\xe4\x93\x02&\"$/api/v1/ai-platforms/{name}/validateB\xae\x01\n" +
+	"\x10DeleteAIPlatform\x12%.memos.api.v1.DeleteAIPlatformRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/api/v1/ai-platforms/{name}\x12\x8c\x01\n" +
+	"\x0eGenerateAnswer\x12#.memos.api.v1.GenerateAnswerRequest\x1a$.memos.api.v1.GenerateAnswerResponse\"/\x82\xd3\xe4\x93\x02):\x01*\"$/api/v1/ai-platforms/{name}/generateB\xae\x01\n" +
 	"\x10com.memos.api.v1B\x16AiPlatformServiceProtoP\x01Z0github.com/usememos/memos/proto/gen/api/v1;apiv1\xa2\x02\x03MAX\xaa\x02\fMemos.Api.V1\xca\x02\fMemos\\Api\\V1\xe2\x02\x18Memos\\Api\\V1\\GPBMetadata\xea\x02\x0eMemos::Api::V1b\x06proto3"
 
 var (
@@ -616,47 +617,45 @@ func file_api_v1_ai_platform_service_proto_rawDescGZIP() []byte {
 	return file_api_v1_ai_platform_service_proto_rawDescData
 }
 
-var file_api_v1_ai_platform_service_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_api_v1_ai_platform_service_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_api_v1_ai_platform_service_proto_goTypes = []any{
-	(*AIPlatform)(nil),                 // 0: memos.api.v1.AIPlatform
-	(*CreateAIPlatformRequest)(nil),    // 1: memos.api.v1.CreateAIPlatformRequest
-	(*ListAIPlatformsRequest)(nil),     // 2: memos.api.v1.ListAIPlatformsRequest
-	(*ListAIPlatformsResponse)(nil),    // 3: memos.api.v1.ListAIPlatformsResponse
-	(*GetAIPlatformRequest)(nil),       // 4: memos.api.v1.GetAIPlatformRequest
-	(*UpdateAIPlatformRequest)(nil),    // 5: memos.api.v1.UpdateAIPlatformRequest
-	(*DeleteAIPlatformRequest)(nil),    // 6: memos.api.v1.DeleteAIPlatformRequest
-	(*ValidateAIPlatformRequest)(nil),  // 7: memos.api.v1.ValidateAIPlatformRequest
-	(*ValidateAIPlatformResponse)(nil), // 8: memos.api.v1.ValidateAIPlatformResponse
-	nil,                                // 9: memos.api.v1.ValidateAIPlatformResponse.ValidationDetailsEntry
-	(*timestamppb.Timestamp)(nil),      // 10: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),      // 11: google.protobuf.FieldMask
-	(*emptypb.Empty)(nil),              // 12: google.protobuf.Empty
+	(*AIPlatform)(nil),              // 0: memos.api.v1.AIPlatform
+	(*CreateAIPlatformRequest)(nil), // 1: memos.api.v1.CreateAIPlatformRequest
+	(*ListAIPlatformsRequest)(nil),  // 2: memos.api.v1.ListAIPlatformsRequest
+	(*ListAIPlatformsResponse)(nil), // 3: memos.api.v1.ListAIPlatformsResponse
+	(*GetAIPlatformRequest)(nil),    // 4: memos.api.v1.GetAIPlatformRequest
+	(*UpdateAIPlatformRequest)(nil), // 5: memos.api.v1.UpdateAIPlatformRequest
+	(*DeleteAIPlatformRequest)(nil), // 6: memos.api.v1.DeleteAIPlatformRequest
+	(*GenerateAnswerRequest)(nil),   // 7: memos.api.v1.GenerateAnswerRequest
+	(*GenerateAnswerResponse)(nil),  // 8: memos.api.v1.GenerateAnswerResponse
+	(*timestamppb.Timestamp)(nil),   // 9: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),   // 10: google.protobuf.FieldMask
+	(*emptypb.Empty)(nil),           // 11: google.protobuf.Empty
 }
 var file_api_v1_ai_platform_service_proto_depIdxs = []int32{
-	10, // 0: memos.api.v1.AIPlatform.create_time:type_name -> google.protobuf.Timestamp
-	10, // 1: memos.api.v1.AIPlatform.update_time:type_name -> google.protobuf.Timestamp
+	9,  // 0: memos.api.v1.AIPlatform.create_time:type_name -> google.protobuf.Timestamp
+	9,  // 1: memos.api.v1.AIPlatform.update_time:type_name -> google.protobuf.Timestamp
 	0,  // 2: memos.api.v1.CreateAIPlatformRequest.platform:type_name -> memos.api.v1.AIPlatform
 	0,  // 3: memos.api.v1.ListAIPlatformsResponse.platforms:type_name -> memos.api.v1.AIPlatform
 	0,  // 4: memos.api.v1.UpdateAIPlatformRequest.platform:type_name -> memos.api.v1.AIPlatform
-	11, // 5: memos.api.v1.UpdateAIPlatformRequest.update_mask:type_name -> google.protobuf.FieldMask
-	9,  // 6: memos.api.v1.ValidateAIPlatformResponse.validation_details:type_name -> memos.api.v1.ValidateAIPlatformResponse.ValidationDetailsEntry
-	1,  // 7: memos.api.v1.AIPlatformService.CreateAIPlatform:input_type -> memos.api.v1.CreateAIPlatformRequest
-	2,  // 8: memos.api.v1.AIPlatformService.ListAIPlatforms:input_type -> memos.api.v1.ListAIPlatformsRequest
-	4,  // 9: memos.api.v1.AIPlatformService.GetAIPlatform:input_type -> memos.api.v1.GetAIPlatformRequest
-	5,  // 10: memos.api.v1.AIPlatformService.UpdateAIPlatform:input_type -> memos.api.v1.UpdateAIPlatformRequest
-	6,  // 11: memos.api.v1.AIPlatformService.DeleteAIPlatform:input_type -> memos.api.v1.DeleteAIPlatformRequest
-	7,  // 12: memos.api.v1.AIPlatformService.ValidateAIPlatform:input_type -> memos.api.v1.ValidateAIPlatformRequest
-	0,  // 13: memos.api.v1.AIPlatformService.CreateAIPlatform:output_type -> memos.api.v1.AIPlatform
-	3,  // 14: memos.api.v1.AIPlatformService.ListAIPlatforms:output_type -> memos.api.v1.ListAIPlatformsResponse
-	0,  // 15: memos.api.v1.AIPlatformService.GetAIPlatform:output_type -> memos.api.v1.AIPlatform
-	0,  // 16: memos.api.v1.AIPlatformService.UpdateAIPlatform:output_type -> memos.api.v1.AIPlatform
-	12, // 17: memos.api.v1.AIPlatformService.DeleteAIPlatform:output_type -> google.protobuf.Empty
-	8,  // 18: memos.api.v1.AIPlatformService.ValidateAIPlatform:output_type -> memos.api.v1.ValidateAIPlatformResponse
-	13, // [13:19] is the sub-list for method output_type
-	7,  // [7:13] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	10, // 5: memos.api.v1.UpdateAIPlatformRequest.update_mask:type_name -> google.protobuf.FieldMask
+	1,  // 6: memos.api.v1.AIPlatformService.CreateAIPlatform:input_type -> memos.api.v1.CreateAIPlatformRequest
+	2,  // 7: memos.api.v1.AIPlatformService.ListAIPlatforms:input_type -> memos.api.v1.ListAIPlatformsRequest
+	4,  // 8: memos.api.v1.AIPlatformService.GetAIPlatform:input_type -> memos.api.v1.GetAIPlatformRequest
+	5,  // 9: memos.api.v1.AIPlatformService.UpdateAIPlatform:input_type -> memos.api.v1.UpdateAIPlatformRequest
+	6,  // 10: memos.api.v1.AIPlatformService.DeleteAIPlatform:input_type -> memos.api.v1.DeleteAIPlatformRequest
+	7,  // 11: memos.api.v1.AIPlatformService.GenerateAnswer:input_type -> memos.api.v1.GenerateAnswerRequest
+	0,  // 12: memos.api.v1.AIPlatformService.CreateAIPlatform:output_type -> memos.api.v1.AIPlatform
+	3,  // 13: memos.api.v1.AIPlatformService.ListAIPlatforms:output_type -> memos.api.v1.ListAIPlatformsResponse
+	0,  // 14: memos.api.v1.AIPlatformService.GetAIPlatform:output_type -> memos.api.v1.AIPlatform
+	0,  // 15: memos.api.v1.AIPlatformService.UpdateAIPlatform:output_type -> memos.api.v1.AIPlatform
+	11, // 16: memos.api.v1.AIPlatformService.DeleteAIPlatform:output_type -> google.protobuf.Empty
+	8,  // 17: memos.api.v1.AIPlatformService.GenerateAnswer:output_type -> memos.api.v1.GenerateAnswerResponse
+	12, // [12:18] is the sub-list for method output_type
+	6,  // [6:12] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_api_v1_ai_platform_service_proto_init() }
@@ -670,7 +669,7 @@ func file_api_v1_ai_platform_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_v1_ai_platform_service_proto_rawDesc), len(file_api_v1_ai_platform_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

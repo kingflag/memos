@@ -1,5 +1,15 @@
 import { Button, Input, Modal, ModalDialog, Typography, DialogTitle, DialogContent, DialogActions, Divider, IconButton } from "@mui/joy";
-import { PlusIcon, Trash2Icon, PencilIcon, BrainCircuitIcon, CircleOffIcon, AlertTriangleIcon, ServerIcon, KeyIcon, CheckCircle2Icon } from "lucide-react";
+import {
+  PlusIcon,
+  Trash2Icon,
+  PencilIcon,
+  BrainCircuitIcon,
+  CircleOffIcon,
+  AlertTriangleIcon,
+  ServerIcon,
+  KeyIcon,
+  CheckCircle2Icon,
+} from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -172,31 +182,33 @@ const AIPlatformSection = observer(() => {
     }
   };
 
-  const handleValidatePlatform = async (platform: AIPlatform) => {
+  const handleGenerateAnswer = async (platform: AIPlatform) => {
     setValidatingPlatform(platform.name);
     try {
-      const response = await aiPlatformServiceClient.validateAIPlatform({
+      const response = await aiPlatformServiceClient.generateAnswer({
         name: platform.name,
+        prompt: "Hello, this is a test message.", // 测试用的提示词
       });
 
-      // 更新验证状态
-      setPlatformValidationStatus(prev => ({
+      // 更新状态
+      setPlatformValidationStatus((prev) => ({
         ...prev,
-        [platform.name]: response.isValid
+        [platform.name]: response.success,
       }));
 
-      if (response.isValid) {
-        toast.success(t("ai.platform-validated") || "AI Platform validated successfully");
+      if (response.success) {
+        toast.success(t("ai.platform-generated") || "Answer generated successfully");
+        console.log("Generated answer:", response.answer);
       } else {
-        toast.error(response.errorMessage || t("ai.platform-validation-failed") || "Failed to validate AI Platform");
+        toast.error(response.errorMessage || t("ai.platform-generation-failed") || "Failed to generate answer");
       }
     } catch (error) {
-      console.error("Failed to validate AI platform:", error);
-      toast.error(t("ai.platform-validation-error") || "Error validating AI Platform");
-      // 验证失败时设置为无效状态
-      setPlatformValidationStatus(prev => ({
+      console.error("Failed to generate answer:", error);
+      toast.error(t("ai.platform-generation-error") || "Error generating answer");
+      // 生成失败时设置为无效状态
+      setPlatformValidationStatus((prev) => ({
         ...prev,
-        [platform.name]: false
+        [platform.name]: false,
       }));
     } finally {
       setValidatingPlatform(null);
@@ -257,20 +269,20 @@ const AIPlatformSection = observer(() => {
                         size="sm"
                         variant="plain"
                         color={
-                          platformValidationStatus[platform.name] === undefined 
-                            ? "neutral" 
-                            : platformValidationStatus[platform.name] 
-                              ? "success" 
+                          platformValidationStatus[platform.name] === undefined
+                            ? "neutral"
+                            : platformValidationStatus[platform.name]
+                              ? "success"
                               : "danger"
                         }
-                        onClick={() => handleValidatePlatform(platform)}
+                        onClick={() => handleGenerateAnswer(platform)}
                         loading={validatingPlatform === platform.name}
                         title={
                           platformValidationStatus[platform.name] === undefined
-                            ? (t("ai.platform-unknown") || "Click to validate platform")
+                            ? t("ai.platform-unknown") || "Click to generate answer"
                             : platformValidationStatus[platform.name]
-                              ? (t("ai.platform-valid") || "Platform is valid")
-                              : (t("ai.platform-invalid") || "Platform is invalid")
+                              ? t("ai.platform-success") || "Answer generated successfully"
+                              : t("ai.platform-failed") || "Failed to generate answer"
                         }
                       >
                         {platformValidationStatus[platform.name] === undefined ? (
@@ -281,20 +293,10 @@ const AIPlatformSection = observer(() => {
                           <AlertTriangleIcon className="w-4 h-4" />
                         )}
                       </IconButton>
-                      <IconButton
-                        size="sm"
-                        variant="plain"
-                        color="neutral"
-                        onClick={() => handleEditPlatform(platform)}
-                      >
+                      <IconButton size="sm" variant="plain" color="neutral" onClick={() => handleEditPlatform(platform)}>
                         <PencilIcon className="w-4 h-4" />
                       </IconButton>
-                      <IconButton
-                        size="sm"
-                        variant="plain"
-                        color="danger"
-                        onClick={() => handleDeletePlatform(platform)}
-                      >
+                      <IconButton size="sm" variant="plain" color="danger" onClick={() => handleDeletePlatform(platform)}>
                         <Trash2Icon className="w-4 h-4" />
                       </IconButton>
                     </div>

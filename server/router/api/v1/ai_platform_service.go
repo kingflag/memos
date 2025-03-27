@@ -262,9 +262,9 @@ func (s *APIV1Service) DeleteAIPlatform(ctx context.Context, request *apiv1.Dele
 	return &emptypb.Empty{}, nil
 }
 
-func (s *APIV1Service) ValidateAIPlatform(ctx context.Context, request *apiv1.ValidateAIPlatformRequest) (*apiv1.ValidateAIPlatformResponse, error) {
+func (s *APIV1Service) GenerateAnswer(ctx context.Context, request *apiv1.GenerateAnswerRequest) (*apiv1.GenerateAnswerResponse, error) {
 	user, err := s.GetCurrentUser(ctx)
-	slog.Info("ValidateAIPlatform called", "userID", user.ID)
+	slog.Info("GenerateAnswer called", "userID", user.ID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get current user")
 	}
@@ -288,21 +288,21 @@ func (s *APIV1Service) ValidateAIPlatform(ctx context.Context, request *apiv1.Va
 		Timeout: 60 * time.Second,
 	}
 
-	// 构建测试请求
-	testMessage := map[string]interface{}{
-		"model": platform.Model, // 使用平台配置的模型
+	// 构建请求
+	requestBody := map[string]interface{}{
+		"model": platform.Model,
 		"messages": []map[string]string{
 			{
 				"role":    "user",
-				"content": "Hello, this is a test message.",
+				"content": request.GetPrompt(),
 			},
 		},
 		"stream": false,
 	}
 
-	jsonData, err := json.Marshal(testMessage)
+	jsonData, err := json.Marshal(requestBody)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to marshal test message: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to marshal request: %v", err)
 	}
 
 	// 创建请求
@@ -313,9 +313,12 @@ func (s *APIV1Service) ValidateAIPlatform(ctx context.Context, request *apiv1.Va
 
 	// 设置请求头
 	req.Header.Set("Content-Type", "application/json")
+	if platform.AccessKey != "" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", platform.AccessKey))
+	}
 
 	// 打印请求信息
-	slog.Info("ValidateAIPlatform request",
+	slog.Info("GenerateAnswer request",
 		"url", platform.URL,
 		"body", string(jsonData),
 	)
@@ -323,8 +326,8 @@ func (s *APIV1Service) ValidateAIPlatform(ctx context.Context, request *apiv1.Va
 	// 发送请求
 	resp, err := client.Do(req)
 	if err != nil {
-		return &apiv1.ValidateAIPlatformResponse{
-			IsValid:      false,
+		return &apiv1.GenerateAnswerResponse{
+			Success:      false,
 			ErrorMessage: fmt.Sprintf("Failed to connect to AI platform: %v", err),
 		}, nil
 	}
@@ -333,14 +336,14 @@ func (s *APIV1Service) ValidateAIPlatform(ctx context.Context, request *apiv1.Va
 	// 读取响应
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return &apiv1.ValidateAIPlatformResponse{
-			IsValid:      false,
+		return &apiv1.GenerateAnswerResponse{
+			Success:      false,
 			ErrorMessage: fmt.Sprintf("Failed to read response: %v", err),
 		}, nil
 	}
 
 	// 打印完整的响应信息
-	slog.Info("ValidateAIPlatform response",
+	slog.Info("GenerateAnswer response",
 		"status", resp.StatusCode,
 		"headers", resp.Header,
 		"body", string(body),
@@ -348,24 +351,42 @@ func (s *APIV1Service) ValidateAIPlatform(ctx context.Context, request *apiv1.Va
 
 	// 检查响应状态
 	if resp.StatusCode != http.StatusOK {
-		return &apiv1.ValidateAIPlatformResponse{
-			IsValid:      false,
+		return &apiv1.GenerateAnswerResponse{
+			Success:      false,
 			ErrorMessage: fmt.Sprintf("AI platform returned error status: %d, body: %s", resp.StatusCode, string(body)),
-			ValidationDetails: map[string]string{
-				"status_code": strconv.Itoa(resp.StatusCode),
-				"response":    string(body),
-				"url":         platform.URL,
-			},
 		}, nil
 	}
 
-	// 验证成功
-	return &apiv1.ValidateAIPlatformResponse{
-		IsValid: true,
-		ValidationDetails: map[string]string{
-			"status_code": strconv.Itoa(resp.StatusCode),
-			"message":     "Successfully validated AI platform",
-		},
+	// 解析响应
+	var responseMap map[string]interface{}
+	if err := json.Unmarshal(body, &responseMap); err != nil {
+		return &apiv1.GenerateAnswerResponse{
+			Success:      false,
+			ErrorMessage: fmt.Sprintf("Failed to parse response: %v", err),
+		}, nil
+	}
+
+	// 适配 Ollama 的响应格式
+	message, ok := responseMap["message"].(map[string]interface{})
+	if !ok {
+		return &apiv1.GenerateAnswerResponse{
+			Success:      false,
+			ErrorMessage: "Invalid response format: missing message",
+		}, nil
+	}
+
+	content, ok := message["content"].(string)
+	if !ok {
+		return &apiv1.GenerateAnswerResponse{
+			Success:      false,
+			ErrorMessage: "Invalid response format: missing content",
+		}, nil
+	}
+
+	// 生成成功
+	return &apiv1.GenerateAnswerResponse{
+		Success: true,
+		Answer:  content,
 	}, nil
 }
 
