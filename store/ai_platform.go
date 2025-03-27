@@ -19,6 +19,7 @@ type AIPlatform struct {
 	AccessKey   string
 	DisplayName string
 	Description string
+	Model       string
 }
 
 // FindAIPlatform 表示查询 AI 平台的条件
@@ -37,6 +38,7 @@ type UpdateAIPlatform struct {
 	AccessKey   *string
 	DisplayName *string
 	Description *string
+	Model       *string
 	UpdatedTs   *int64
 }
 
@@ -90,6 +92,9 @@ func (s *Store) UpdateAIPlatform(ctx context.Context, update *AIPlatform) (*AIPl
 	}
 	if update.Description != "" {
 		updateParam.Description = &update.Description
+	}
+	if update.Model != "" {
+		updateParam.Model = &update.Model
 	}
 
 	if err := s.driver.UpdateAIPlatform(ctx, updateParam); err != nil {

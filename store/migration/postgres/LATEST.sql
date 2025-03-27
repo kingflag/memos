@@ -138,6 +138,7 @@ CREATE TABLE ai_platform (
   access_key TEXT NOT NULL,
   display_name TEXT NOT NULL,
   description TEXT NOT NULL DEFAULT '',
+  model TEXT NOT NULL DEFAULT '',
   created_ts BIGINT NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW()),
   updated_ts BIGINT NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())
 );

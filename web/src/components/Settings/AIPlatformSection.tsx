@@ -18,11 +18,13 @@ const AIPlatformSection = observer(() => {
     url: "",
     accessKey: "",
     description: "",
+    model: "",
   });
   const [validationError, setValidationError] = useState<{ [key: string]: string | undefined }>({});
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [platformToDelete, setPlatformToDelete] = useState<AIPlatform | null>(null);
   const [validatingPlatform, setValidatingPlatform] = useState<string | null>(null);
+  const [platformValidationStatus, setPlatformValidationStatus] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     fetchAIPlatforms();
@@ -32,6 +34,7 @@ const AIPlatformSection = observer(() => {
     setIsLoading(true);
     try {
       const response = await aiPlatformServiceClient.listAIPlatforms({});
+      console.debug("AI Platforms response:", response);
       setAiPlatforms(response.platforms);
     } catch (error) {
       console.error("Failed to fetch AI platforms:", error);
@@ -42,7 +45,6 @@ const AIPlatformSection = observer(() => {
   };
 
   const handleCreateOrUpdatePlatform = async () => {
-    // Validate form
     const errors: { [key: string]: string } = {};
     if (!platformFormData.displayName.trim()) {
       errors.displayName = t("common.required");
@@ -53,6 +55,9 @@ const AIPlatformSection = observer(() => {
     if (!platformFormData.accessKey.trim()) {
       errors.accessKey = t("common.required");
     }
+    if (!platformFormData.model.trim()) {
+      errors.model = t("common.required");
+    }
 
     if (Object.keys(errors).length > 0) {
       setValidationError(errors);
@@ -62,9 +67,6 @@ const AIPlatformSection = observer(() => {
     setIsLoading(true);
     try {
       if (editingPlatform) {
-        // Update existing platform
-        console.debug("editingPlatform", editingPlatform);
-        console.debug("platformFormData", platformFormData);
         await aiPlatformServiceClient.updateAIPlatform({
           platform: {
             name: editingPlatform.name,
@@ -72,18 +74,19 @@ const AIPlatformSection = observer(() => {
             url: platformFormData.url,
             accessKey: platformFormData.accessKey,
             description: platformFormData.description,
+            model: platformFormData.model,
           },
-          updateMask: ["display_name", "url", "access_key", "description"],
+          updateMask: ["display_name", "url", "access_key", "description", "model"],
         });
         toast.success(t("common.updated-successfully"));
       } else {
-        // Create new platform
         await aiPlatformServiceClient.createAIPlatform({
           platform: {
             displayName: platformFormData.displayName,
             url: platformFormData.url,
             accessKey: platformFormData.accessKey,
             description: platformFormData.description,
+            model: platformFormData.model,
           },
         });
         toast.success(t("common.created-successfully"));
@@ -133,6 +136,7 @@ const AIPlatformSection = observer(() => {
       url: platform.url,
       accessKey: platform.accessKey,
       description: platform.description,
+      model: platform.model,
     });
     setShowPlatformModal(true);
   };
@@ -149,6 +153,7 @@ const AIPlatformSection = observer(() => {
       url: "",
       accessKey: "",
       description: "",
+      model: "",
     });
     setValidationError({});
   };
@@ -170,26 +175,29 @@ const AIPlatformSection = observer(() => {
   const handleValidatePlatform = async (platform: AIPlatform) => {
     setValidatingPlatform(platform.name);
     try {
-      console.log("platform params", platform);
-      const response = await fetch(platform.url, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${platform.accessKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: [{ role: "user", content: "test" }]
-        })
+      const response = await aiPlatformServiceClient.validateAIPlatform({
+        name: platform.name,
       });
-      console.log("response", response);
-      if (response.ok) {
+
+      // 更新验证状态
+      setPlatformValidationStatus(prev => ({
+        ...prev,
+        [platform.name]: response.isValid
+      }));
+
+      if (response.isValid) {
         toast.success(t("ai.platform-validated") || "AI Platform validated successfully");
       } else {
-        toast.error(t("ai.platform-validation-failed") || "Failed to validate AI Platform");
+        toast.error(response.errorMessage || t("ai.platform-validation-failed") || "Failed to validate AI Platform");
       }
     } catch (error) {
       console.error("Failed to validate AI platform:", error);
       toast.error(t("ai.platform-validation-error") || "Error validating AI Platform");
+      // 验证失败时设置为无效状态
+      setPlatformValidationStatus(prev => ({
+        ...prev,
+        [platform.name]: false
+      }));
     } finally {
       setValidatingPlatform(null);
     }
@@ -229,6 +237,7 @@ const AIPlatformSection = observer(() => {
               <tr className="border-b border-gray-200 dark:border-gray-700">
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">{t("ai-platform.table.name") || "Name"}</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">{t("ai-platform.table.url") || "URL"}</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">{t("ai-platform.table.model") || "Model"}</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
                   {t("ai-platform.table.description") || "Description"}
                 </th>
@@ -240,18 +249,37 @@ const AIPlatformSection = observer(() => {
                 <tr key={platform.name} className="border-b border-gray-100 hover:bg-gray-50 dark:hover:bg-zinc-800 dark:border-zinc-700">
                   <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{platform.displayName}</td>
                   <td className="px-4 py-3 text-sm text-gray-500 font-mono text-xs">{platform.url}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500">{platform.model || "-"}</td>
                   <td className="px-4 py-3 text-sm text-gray-500">{platform.description || "-"}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex flex-row justify-end items-center space-x-1">
                       <IconButton
                         size="sm"
                         variant="plain"
-                        color="success"
+                        color={
+                          platformValidationStatus[platform.name] === undefined 
+                            ? "neutral" 
+                            : platformValidationStatus[platform.name] 
+                              ? "success" 
+                              : "danger"
+                        }
                         onClick={() => handleValidatePlatform(platform)}
                         loading={validatingPlatform === platform.name}
-                        title={t("ai.validate-platform") || "Validate Platform"}
+                        title={
+                          platformValidationStatus[platform.name] === undefined
+                            ? (t("ai.platform-unknown") || "Click to validate platform")
+                            : platformValidationStatus[platform.name]
+                              ? (t("ai.platform-valid") || "Platform is valid")
+                              : (t("ai.platform-invalid") || "Platform is invalid")
+                        }
                       >
-                        <CheckCircle2Icon className="w-4 h-4" />
+                        {platformValidationStatus[platform.name] === undefined ? (
+                          <CircleOffIcon className="w-4 h-4" />
+                        ) : platformValidationStatus[platform.name] ? (
+                          <CheckCircle2Icon className="w-4 h-4" />
+                        ) : (
+                          <AlertTriangleIcon className="w-4 h-4" />
+                        )}
                       </IconButton>
                       <IconButton
                         size="sm"
@@ -365,6 +393,25 @@ const AIPlatformSection = observer(() => {
                   onChange={(e) => handleFormChange("description", e.target.value)}
                   placeholder={t("ai-platform.form.description-placeholder") || "Optional description of this platform"}
                 />
+              </div>
+
+              <div>
+                <Typography level="body-sm" className="mb-1 font-medium">
+                  {t("ai-platform.form.model") || "Model"} *
+                </Typography>
+                <Input
+                  size="sm"
+                  fullWidth
+                  value={platformFormData.model}
+                  onChange={(e) => handleFormChange("model", e.target.value)}
+                  error={!!validationError.model}
+                  placeholder={t("ai-platform.form.model-placeholder") || "e.g. deepseek-coder"}
+                />
+                {validationError.model && (
+                  <Typography level="body-xs" className="mt-1 text-danger">
+                    {validationError.model}
+                  </Typography>
+                )}
               </div>
             </div>
           </DialogContent>

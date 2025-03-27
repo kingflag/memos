@@ -244,6 +244,43 @@ func local_request_AIPlatformService_DeleteAIPlatform_0(ctx context.Context, mar
 	return msg, metadata, err
 }
 
+func request_AIPlatformService_ValidateAIPlatform_0(ctx context.Context, marshaler runtime.Marshaler, client AIPlatformServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ValidateAIPlatformRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	io.Copy(io.Discard, req.Body)
+	val, ok := pathParams["name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+	}
+	protoReq.Name, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+	}
+	msg, err := client.ValidateAIPlatform(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_AIPlatformService_ValidateAIPlatform_0(ctx context.Context, marshaler runtime.Marshaler, server AIPlatformServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ValidateAIPlatformRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+	}
+	protoReq.Name, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+	}
+	msg, err := server.ValidateAIPlatform(ctx, &protoReq)
+	return msg, metadata, err
+}
+
 // RegisterAIPlatformServiceHandlerServer registers the http handlers for service AIPlatformService to "mux".
 // UnaryRPC     :call AIPlatformServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -349,6 +386,26 @@ func RegisterAIPlatformServiceHandlerServer(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_AIPlatformService_DeleteAIPlatform_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodPost, pattern_AIPlatformService_ValidateAIPlatform_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/memos.api.v1.AIPlatformService/ValidateAIPlatform", runtime.WithHTTPPathPattern("/api/v1/ai-platforms/{name}/validate"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_AIPlatformService_ValidateAIPlatform_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_AIPlatformService_ValidateAIPlatform_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -475,21 +532,40 @@ func RegisterAIPlatformServiceHandlerClient(ctx context.Context, mux *runtime.Se
 		}
 		forward_AIPlatformService_DeleteAIPlatform_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodPost, pattern_AIPlatformService_ValidateAIPlatform_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/memos.api.v1.AIPlatformService/ValidateAIPlatform", runtime.WithHTTPPathPattern("/api/v1/ai-platforms/{name}/validate"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_AIPlatformService_ValidateAIPlatform_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_AIPlatformService_ValidateAIPlatform_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	return nil
 }
 
 var (
-	pattern_AIPlatformService_CreateAIPlatform_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "ai-platforms"}, ""))
-	pattern_AIPlatformService_ListAIPlatforms_0  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "ai-platforms"}, ""))
-	pattern_AIPlatformService_GetAIPlatform_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "ai-platforms", "name"}, ""))
-	pattern_AIPlatformService_UpdateAIPlatform_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "ai-platforms", "platform.name"}, ""))
-	pattern_AIPlatformService_DeleteAIPlatform_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "ai-platforms", "name"}, ""))
+	pattern_AIPlatformService_CreateAIPlatform_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "ai-platforms"}, ""))
+	pattern_AIPlatformService_ListAIPlatforms_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "ai-platforms"}, ""))
+	pattern_AIPlatformService_GetAIPlatform_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "ai-platforms", "name"}, ""))
+	pattern_AIPlatformService_UpdateAIPlatform_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "ai-platforms", "platform.name"}, ""))
+	pattern_AIPlatformService_DeleteAIPlatform_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "ai-platforms", "name"}, ""))
+	pattern_AIPlatformService_ValidateAIPlatform_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "ai-platforms", "name", "validate"}, ""))
 )
 
 var (
-	forward_AIPlatformService_CreateAIPlatform_0 = runtime.ForwardResponseMessage
-	forward_AIPlatformService_ListAIPlatforms_0  = runtime.ForwardResponseMessage
-	forward_AIPlatformService_GetAIPlatform_0    = runtime.ForwardResponseMessage
-	forward_AIPlatformService_UpdateAIPlatform_0 = runtime.ForwardResponseMessage
-	forward_AIPlatformService_DeleteAIPlatform_0 = runtime.ForwardResponseMessage
+	forward_AIPlatformService_CreateAIPlatform_0   = runtime.ForwardResponseMessage
+	forward_AIPlatformService_ListAIPlatforms_0    = runtime.ForwardResponseMessage
+	forward_AIPlatformService_GetAIPlatform_0      = runtime.ForwardResponseMessage
+	forward_AIPlatformService_UpdateAIPlatform_0   = runtime.ForwardResponseMessage
+	forward_AIPlatformService_DeleteAIPlatform_0   = runtime.ForwardResponseMessage
+	forward_AIPlatformService_ValidateAIPlatform_0 = runtime.ForwardResponseMessage
 )

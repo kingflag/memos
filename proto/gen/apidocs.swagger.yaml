@@ -114,6 +114,29 @@ paths:
           type: string
       tags:
         - AIPlatformService
+  /api/v1/ai-platforms/{name}/validate:
+    post:
+      summary: Validate an AI platform
+      operationId: AIPlatformService_ValidateAIPlatform
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ValidateAIPlatformResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: name
+          description: |-
+            The name of the AI platform to validate
+            Format: ai-platforms/{platform_id}
+          in: path
+          required: true
+          type: string
+      tags:
+        - AIPlatformService
   /api/v1/ai-platforms/{platform.name}:
     patch:
       summary: Update an existing AI platform
@@ -154,6 +177,9 @@ paths:
               description:
                 type: string
                 title: Optional description of the AI platform
+              model:
+                type: string
+                title: The model name to use for this platform
               createTime:
                 type: string
                 format: date-time
@@ -2685,6 +2711,9 @@ definitions:
       description:
         type: string
         title: Optional description of the AI platform
+      model:
+        type: string
+        title: The model name to use for this platform
       createTime:
         type: string
         format: date-time
@@ -3468,6 +3497,21 @@ definitions:
       totalMemoCount:
         type: integer
         format: int32
+  v1ValidateAIPlatformResponse:
+    type: object
+    properties:
+      isValid:
+        type: boolean
+        title: Whether the platform is valid
+      errorMessage:
+        type: string
+        title: Error message if validation failed
+      validationDetails:
+        type: object
+        additionalProperties:
+          type: string
+        title: Additional validation details
+    title: Response message for ValidateAIPlatform
   v1Visibility:
     type: string
     enum:

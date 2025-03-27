@@ -138,6 +138,7 @@ CREATE TABLE `ai_platform` (
   `access_key` TEXT NOT NULL,
   `display_name` TEXT NOT NULL,
   `description` TEXT NOT NULL DEFAULT '',
+  `model` varchar(255) NOT NULL DEFAULT '',
   `created_ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

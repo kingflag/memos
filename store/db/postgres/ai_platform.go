@@ -9,9 +9,9 @@ import (
 )
 
 func (d *DB) CreateAIPlatform(ctx context.Context, create *store.AIPlatform) (*store.AIPlatform, error) {
-	fields := []string{"url", "access_key", "display_name", "description", "created_ts", "updated_ts"}
-	placeholder := []string{"$1", "$2", "$3", "$4", "$5", "$6"}
-	args := []any{create.URL, create.AccessKey, create.DisplayName, create.Description, create.CreatedTs, create.UpdatedTs}
+	fields := []string{"url", "access_key", "display_name", "description", "model", "created_ts", "updated_ts"}
+	placeholder := []string{"$1", "$2", "$3", "$4", "$5", "$6", "$7"}
+	args := []any{create.URL, create.AccessKey, create.DisplayName, create.Description, create.Model, create.CreatedTs, create.UpdatedTs}
 
 	stmt := fmt.Sprintf("INSERT INTO ai_platform (%s) VALUES (%s) RETURNING id", strings.Join(fields, ", "), strings.Join(placeholder, ", "))
 	var id int32
@@ -49,6 +49,7 @@ func (d *DB) ListAIPlatforms(ctx context.Context, find *store.FindAIPlatform) ([
 		"ai_platform.access_key AS access_key",
 		"ai_platform.display_name AS display_name",
 		"ai_platform.description AS description",
+		"ai_platform.model AS model",
 		"ai_platform.created_ts AS created_ts",
 		"ai_platform.updated_ts AS updated_ts",
 	}
@@ -83,6 +84,7 @@ func (d *DB) ListAIPlatforms(ctx context.Context, find *store.FindAIPlatform) ([
 			&platform.AccessKey,
 			&platform.DisplayName,
 			&platform.Description,
+			&platform.Model,
 			&platform.CreatedTs,
 			&platform.UpdatedTs,
 		); err != nil {
@@ -117,6 +119,10 @@ func (d *DB) UpdateAIPlatform(ctx context.Context, update *store.UpdateAIPlatfor
 	if v := update.Description; v != nil {
 		argCount++
 		set, args = append(set, fmt.Sprintf("description = $%d", argCount)), append(args, *v)
+	}
+	if v := update.Model; v != nil {
+		argCount++
+		set, args = append(set, fmt.Sprintf("model = $%d", argCount)), append(args, *v)
 	}
 	if v := update.UpdatedTs; v != nil {
 		argCount++

@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AIPlatformService_CreateAIPlatform_FullMethodName = "/memos.api.v1.AIPlatformService/CreateAIPlatform"
-	AIPlatformService_ListAIPlatforms_FullMethodName  = "/memos.api.v1.AIPlatformService/ListAIPlatforms"
-	AIPlatformService_GetAIPlatform_FullMethodName    = "/memos.api.v1.AIPlatformService/GetAIPlatform"
-	AIPlatformService_UpdateAIPlatform_FullMethodName = "/memos.api.v1.AIPlatformService/UpdateAIPlatform"
-	AIPlatformService_DeleteAIPlatform_FullMethodName = "/memos.api.v1.AIPlatformService/DeleteAIPlatform"
+	AIPlatformService_CreateAIPlatform_FullMethodName   = "/memos.api.v1.AIPlatformService/CreateAIPlatform"
+	AIPlatformService_ListAIPlatforms_FullMethodName    = "/memos.api.v1.AIPlatformService/ListAIPlatforms"
+	AIPlatformService_GetAIPlatform_FullMethodName      = "/memos.api.v1.AIPlatformService/GetAIPlatform"
+	AIPlatformService_UpdateAIPlatform_FullMethodName   = "/memos.api.v1.AIPlatformService/UpdateAIPlatform"
+	AIPlatformService_DeleteAIPlatform_FullMethodName   = "/memos.api.v1.AIPlatformService/DeleteAIPlatform"
+	AIPlatformService_ValidateAIPlatform_FullMethodName = "/memos.api.v1.AIPlatformService/ValidateAIPlatform"
 )
 
 // AIPlatformServiceClient is the client API for AIPlatformService service.
@@ -43,6 +44,8 @@ type AIPlatformServiceClient interface {
 	UpdateAIPlatform(ctx context.Context, in *UpdateAIPlatformRequest, opts ...grpc.CallOption) (*AIPlatform, error)
 	// Delete an AI platform
 	DeleteAIPlatform(ctx context.Context, in *DeleteAIPlatformRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Validate an AI platform
+	ValidateAIPlatform(ctx context.Context, in *ValidateAIPlatformRequest, opts ...grpc.CallOption) (*ValidateAIPlatformResponse, error)
 }
 
 type aIPlatformServiceClient struct {
@@ -103,6 +106,16 @@ func (c *aIPlatformServiceClient) DeleteAIPlatform(ctx context.Context, in *Dele
 	return out, nil
 }
 
+func (c *aIPlatformServiceClient) ValidateAIPlatform(ctx context.Context, in *ValidateAIPlatformRequest, opts ...grpc.CallOption) (*ValidateAIPlatformResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ValidateAIPlatformResponse)
+	err := c.cc.Invoke(ctx, AIPlatformService_ValidateAIPlatform_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AIPlatformServiceServer is the server API for AIPlatformService service.
 // All implementations must embed UnimplementedAIPlatformServiceServer
 // for forward compatibility.
@@ -119,6 +132,8 @@ type AIPlatformServiceServer interface {
 	UpdateAIPlatform(context.Context, *UpdateAIPlatformRequest) (*AIPlatform, error)
 	// Delete an AI platform
 	DeleteAIPlatform(context.Context, *DeleteAIPlatformRequest) (*emptypb.Empty, error)
+	// Validate an AI platform
+	ValidateAIPlatform(context.Context, *ValidateAIPlatformRequest) (*ValidateAIPlatformResponse, error)
 	mustEmbedUnimplementedAIPlatformServiceServer()
 }
 
@@ -143,6 +158,9 @@ func (UnimplementedAIPlatformServiceServer) UpdateAIPlatform(context.Context, *U
 }
 func (UnimplementedAIPlatformServiceServer) DeleteAIPlatform(context.Context, *DeleteAIPlatformRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAIPlatform not implemented")
+}
+func (UnimplementedAIPlatformServiceServer) ValidateAIPlatform(context.Context, *ValidateAIPlatformRequest) (*ValidateAIPlatformResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateAIPlatform not implemented")
 }
 func (UnimplementedAIPlatformServiceServer) mustEmbedUnimplementedAIPlatformServiceServer() {}
 func (UnimplementedAIPlatformServiceServer) testEmbeddedByValue()                           {}
@@ -255,6 +273,24 @@ func _AIPlatformService_DeleteAIPlatform_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AIPlatformService_ValidateAIPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateAIPlatformRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AIPlatformServiceServer).ValidateAIPlatform(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AIPlatformService_ValidateAIPlatform_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AIPlatformServiceServer).ValidateAIPlatform(ctx, req.(*ValidateAIPlatformRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AIPlatformService_ServiceDesc is the grpc.ServiceDesc for AIPlatformService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -281,6 +317,10 @@ var AIPlatformService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAIPlatform",
 			Handler:    _AIPlatformService_DeleteAIPlatform_Handler,
+		},
+		{
+			MethodName: "ValidateAIPlatform",
+			Handler:    _AIPlatformService_ValidateAIPlatform_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

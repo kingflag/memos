@@ -1,9 +1,13 @@
 package v1
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log/slog"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -160,10 +164,8 @@ func (s *APIV1Service) UpdateAIPlatform(ctx context.Context, request *apiv1.Upda
 		return nil, status.Errorf(codes.Internal, "failed to get current user")
 	}
 
-	// 打印用户ID
-	slog.Info("UpdateAIPlatform called", "userID", user.ID)
-
 	platform := request.GetPlatform()
+	slog.Debug("UpdateAIPlatform called", "userID", user.ID, "request:", platform)
 	if platform == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "platform is empty")
 	}
@@ -209,12 +211,15 @@ func (s *APIV1Service) UpdateAIPlatform(ctx context.Context, request *apiv1.Upda
 			update.DisplayName = platform.GetDisplayName()
 		case "description":
 			update.Description = platform.GetDescription()
+		case "model":
+			update.Model = platform.GetModel()
 		}
 	}
 
 	aiPlatform, err := s.Store.UpdateAIPlatform(ctx, update)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to update AI platform: %v", err)
+
 	}
 
 	return convertAIPlatformFromStore(aiPlatform), nil
@@ -257,6 +262,113 @@ func (s *APIV1Service) DeleteAIPlatform(ctx context.Context, request *apiv1.Dele
 	return &emptypb.Empty{}, nil
 }
 
+func (s *APIV1Service) ValidateAIPlatform(ctx context.Context, request *apiv1.ValidateAIPlatformRequest) (*apiv1.ValidateAIPlatformResponse, error) {
+	user, err := s.GetCurrentUser(ctx)
+	slog.Info("ValidateAIPlatform called", "userID", user.ID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get current user")
+	}
+
+	// 获取平台信息
+	id, err := extractPlatformID(request.GetName())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid name format: %v", err)
+	}
+
+	platform, err := s.Store.GetAIPlatform(ctx, id)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get AI platform: %v", err)
+	}
+	if platform == nil {
+		return nil, status.Errorf(codes.NotFound, "AI platform not found")
+	}
+
+	// 创建 HTTP 客户端
+	client := &http.Client{
+		Timeout: 60 * time.Second,
+	}
+
+	// 构建测试请求
+	testMessage := map[string]interface{}{
+		"model": platform.Model, // 使用平台配置的模型
+		"messages": []map[string]string{
+			{
+				"role":    "user",
+				"content": "Hello, this is a test message.",
+			},
+		},
+		"stream": false,
+	}
+
+	jsonData, err := json.Marshal(testMessage)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to marshal test message: %v", err)
+	}
+
+	// 创建请求
+	req, err := http.NewRequest("POST", platform.URL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to create request: %v", err)
+	}
+
+	// 设置请求头
+	req.Header.Set("Content-Type", "application/json")
+
+	// 打印请求信息
+	slog.Info("ValidateAIPlatform request",
+		"url", platform.URL,
+		"body", string(jsonData),
+	)
+
+	// 发送请求
+	resp, err := client.Do(req)
+	if err != nil {
+		return &apiv1.ValidateAIPlatformResponse{
+			IsValid:      false,
+			ErrorMessage: fmt.Sprintf("Failed to connect to AI platform: %v", err),
+		}, nil
+	}
+	defer resp.Body.Close()
+
+	// 读取响应
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return &apiv1.ValidateAIPlatformResponse{
+			IsValid:      false,
+			ErrorMessage: fmt.Sprintf("Failed to read response: %v", err),
+		}, nil
+	}
+
+	// 打印完整的响应信息
+	slog.Info("ValidateAIPlatform response",
+		"status", resp.StatusCode,
+		"headers", resp.Header,
+		"body", string(body),
+	)
+
+	// 检查响应状态
+	if resp.StatusCode != http.StatusOK {
+		return &apiv1.ValidateAIPlatformResponse{
+			IsValid:      false,
+			ErrorMessage: fmt.Sprintf("AI platform returned error status: %d, body: %s", resp.StatusCode, string(body)),
+			ValidationDetails: map[string]string{
+				"status_code": strconv.Itoa(resp.StatusCode),
+				"response":    string(body),
+				"url":         platform.URL,
+			},
+		}, nil
+	}
+
+	// 验证成功
+	return &apiv1.ValidateAIPlatformResponse{
+		IsValid: true,
+		ValidationDetails: map[string]string{
+			"status_code": strconv.Itoa(resp.StatusCode),
+			"message":     "Successfully validated AI platform",
+		},
+	}, nil
+}
+
 // 工具函数：将存储模型转换为 API 模型
 func convertAIPlatformFromStore(platform *store.AIPlatform) *apiv1.AIPlatform {
 	if platform == nil {
@@ -269,6 +381,7 @@ func convertAIPlatformFromStore(platform *store.AIPlatform) *apiv1.AIPlatform {
 		AccessKey:   platform.AccessKey,
 		DisplayName: platform.DisplayName,
 		Description: platform.Description,
+		Model:       platform.Model,
 		CreateTime:  timestamppb.New(time.Unix(platform.CreatedTs, 0)),
 		UpdateTime:  timestamppb.New(time.Unix(platform.UpdatedTs, 0)),
 	}

@@ -47,6 +47,13 @@ service AIPlatformService {
       delete: "/api/v1/ai-platforms/{name}"
     };
   }
+  
+  // Validate an AI platform
+  rpc ValidateAIPlatform(ValidateAIPlatformRequest) returns (ValidateAIPlatformResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/ai-platforms/{name}/validate"
+    };
+  }
 }
 
 // AI Platform resource
@@ -67,11 +74,14 @@ message AIPlatform {
   // Optional description of the AI platform
   string description = 5;
   
+  // The model name to use for this platform
+  string model = 6;
+  
   // Creation timestamp
-  google.protobuf.Timestamp create_time = 6;
+  google.protobuf.Timestamp create_time = 7;
   
   // Last update timestamp
-  google.protobuf.Timestamp update_time = 7;
+  google.protobuf.Timestamp update_time = 8;
 }
 
 // Request message for CreateAIPlatform
@@ -119,4 +129,23 @@ message DeleteAIPlatformRequest {
   // The name of the AI platform to delete
   // Format: ai-platforms/{platform_id}
   string name = 1;
+}
+
+// Request message for ValidateAIPlatform
+message ValidateAIPlatformRequest {
+  // The name of the AI platform to validate
+  // Format: ai-platforms/{platform_id}
+  string name = 1;
+}
+
+// Response message for ValidateAIPlatform
+message ValidateAIPlatformResponse {
+  // Whether the platform is valid
+  bool is_valid = 1;
+  
+  // Error message if validation failed
+  string error_message = 2;
+  
+  // Additional validation details
+  map<string, string> validation_details = 3;
 }
