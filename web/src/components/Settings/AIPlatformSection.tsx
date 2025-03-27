@@ -1,5 +1,5 @@
 import { Button, Input, Modal, ModalDialog, Typography, DialogTitle, DialogContent, DialogActions, Divider, IconButton } from "@mui/joy";
-import { PlusIcon, Trash2Icon, PencilIcon, BrainCircuitIcon, CircleOffIcon, AlertTriangleIcon, ServerIcon, KeyIcon } from "lucide-react";
+import { PlusIcon, Trash2Icon, PencilIcon, BrainCircuitIcon, CircleOffIcon, AlertTriangleIcon, ServerIcon, KeyIcon, CheckCircle2Icon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -22,6 +22,7 @@ const AIPlatformSection = observer(() => {
   const [validationError, setValidationError] = useState<{ [key: string]: string | undefined }>({});
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [platformToDelete, setPlatformToDelete] = useState<AIPlatform | null>(null);
+  const [validatingPlatform, setValidatingPlatform] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAIPlatforms();
@@ -62,6 +63,8 @@ const AIPlatformSection = observer(() => {
     try {
       if (editingPlatform) {
         // Update existing platform
+        console.debug("editingPlatform", editingPlatform);
+        console.debug("platformFormData", platformFormData);
         await aiPlatformServiceClient.updateAIPlatform({
           platform: {
             name: editingPlatform.name,
@@ -70,7 +73,7 @@ const AIPlatformSection = observer(() => {
             accessKey: platformFormData.accessKey,
             description: platformFormData.description,
           },
-          updateMask: ["access_key"],
+          updateMask: ["display_name", "url", "access_key", "description"],
         });
         toast.success(t("common.updated-successfully"));
       } else {
@@ -164,6 +167,34 @@ const AIPlatformSection = observer(() => {
     }
   };
 
+  const handleValidatePlatform = async (platform: AIPlatform) => {
+    setValidatingPlatform(platform.name);
+    try {
+      console.log("platform params", platform);
+      const response = await fetch(platform.url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${platform.accessKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: "test" }]
+        })
+      });
+      console.log("response", response);
+      if (response.ok) {
+        toast.success(t("ai.platform-validated") || "AI Platform validated successfully");
+      } else {
+        toast.error(t("ai.platform-validation-failed") || "Failed to validate AI Platform");
+      }
+    } catch (error) {
+      console.error("Failed to validate AI platform:", error);
+      toast.error(t("ai.platform-validation-error") || "Error validating AI Platform");
+    } finally {
+      setValidatingPlatform(null);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col justify-start items-start">
       <div className="w-full flex flex-row justify-between items-center mb-2">
@@ -212,10 +243,30 @@ const AIPlatformSection = observer(() => {
                   <td className="px-4 py-3 text-sm text-gray-500">{platform.description || "-"}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex flex-row justify-end items-center space-x-1">
-                      <IconButton size="sm" variant="plain" color="neutral" onClick={() => handleEditPlatform(platform)}>
+                      <IconButton
+                        size="sm"
+                        variant="plain"
+                        color="success"
+                        onClick={() => handleValidatePlatform(platform)}
+                        loading={validatingPlatform === platform.name}
+                        title={t("ai.validate-platform") || "Validate Platform"}
+                      >
+                        <CheckCircle2Icon className="w-4 h-4" />
+                      </IconButton>
+                      <IconButton
+                        size="sm"
+                        variant="plain"
+                        color="neutral"
+                        onClick={() => handleEditPlatform(platform)}
+                      >
                         <PencilIcon className="w-4 h-4" />
                       </IconButton>
-                      <IconButton size="sm" variant="plain" color="danger" onClick={() => handleDeletePlatform(platform)}>
+                      <IconButton
+                        size="sm"
+                        variant="plain"
+                        color="danger"
+                        onClick={() => handleDeletePlatform(platform)}
+                      >
                         <Trash2Icon className="w-4 h-4" />
                       </IconButton>
                     </div>
@@ -260,10 +311,10 @@ const AIPlatformSection = observer(() => {
 
               <div>
                 <Typography level="body-sm" className="mb-1 font-medium">
-                  <div className="flex items-center">
-                    <ServerIcon className="w-4 h-4 mr-1 text-gray-500" />
-                    {t("ai-platform.form.url") || "URL"} *
-                  </div>
+                  {t("ai-platform.form.url") || "URL"} *
+                  <span className="inline-flex items-center ml-1">
+                    <ServerIcon className="w-4 h-4 text-gray-500" />
+                  </span>
                 </Typography>
                 <Input
                   size="sm"
@@ -282,10 +333,10 @@ const AIPlatformSection = observer(() => {
 
               <div>
                 <Typography level="body-sm" className="mb-1 font-medium">
-                  <div className="flex items-center">
-                    <KeyIcon className="w-4 h-4 mr-1 text-gray-500" />
-                    {t("ai-platform.form.access-key") || "Access Key"} *
-                  </div>
+                  {t("ai-platform.form.access-key") || "Access Key"} *
+                  <span className="inline-flex items-center ml-1">
+                    <KeyIcon className="w-4 h-4 text-gray-500" />
+                  </span>
                 </Typography>
                 <Input
                   size="sm"
