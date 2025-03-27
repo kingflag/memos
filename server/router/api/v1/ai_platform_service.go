@@ -46,6 +46,9 @@ func (s *APIV1Service) CreateAIPlatform(ctx context.Context, request *apiv1.Crea
 	if platform.DisplayName == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "display name is required")
 	}
+	if platform.Model == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "model is required")
+	}
 
 	// 创建存储模型
 	create := &store.AIPlatform{
@@ -53,6 +56,7 @@ func (s *APIV1Service) CreateAIPlatform(ctx context.Context, request *apiv1.Crea
 		AccessKey:   platform.AccessKey,
 		DisplayName: platform.DisplayName,
 		Description: platform.Description,
+		Model:       platform.Model,
 		CreatedTs:   time.Now().Unix(),
 		UpdatedTs:   time.Now().Unix(),
 	}
