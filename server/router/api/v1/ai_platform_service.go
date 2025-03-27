@@ -383,6 +383,11 @@ func (s *APIV1Service) GenerateAnswer(ctx context.Context, request *apiv1.Genera
 		}, nil
 	}
 
+	// 移除 think 标签
+	content = strings.ReplaceAll(content, "<think>", "")
+	content = strings.ReplaceAll(content, "</think>", "")
+	content = strings.TrimSpace(content)
+
 	// 生成成功
 	return &apiv1.GenerateAnswerResponse{
 		Success: true,
