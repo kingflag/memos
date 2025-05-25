@@ -1,5 +1,9 @@
 FROM golang:1.24-alpine AS backend
 WORKDIR /backend-build
+
+# Set GOPROXY to better fetch dependencies in restricted network environments
+ENV GOPROXY=https://goproxy.cn,direct
+
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .

@@ -116,7 +116,7 @@
     "has-task-list": "有待办"
   },
   "inbox": {
-    "memo-comment": "{{user}} 评论了您的“{{memo}}”。",
+    "memo-comment": "{{user}} 评论了您的\"{{memo}}\"。",
     "version-update": "新版本 {{version}} 现已推出！"
   },
   "markdown": {
@@ -223,6 +223,11 @@
     "go-to-home": "回到首页"
   },
   "setting": {
+    "ai-platform": "AI 平台",
+    "ai-platform-section": {
+      "title": "AI 平台管理",
+      "description": "管理并配置您的 AI 平台"
+    },
     "access-token-section": {
       "create-dialog": {
         "create-access-token": "创建令牌",
@@ -289,7 +294,7 @@
       "authorization-endpoint": "授权端点（Authorization Endpoint）",
       "client-id": "客户端ID（Client ID）",
       "client-secret": "客户端密钥（Client Secret）",
-      "confirm-delete": "您确定要删除“{{name}}”单点登录配置吗？（此操作不可逆）",
+      "confirm-delete": "您确定要删除\"{{name}}\"单点登录配置吗？（此操作不可逆）",
       "create-sso": "创建单点登录",
       "custom": "自定义",
       "delete-sso": "确认删除",
@@ -341,7 +346,7 @@
       "url-prefix-placeholder": "自定义链接前缀，可选",
       "url-suffix": "链接后缀",
       "url-suffix-placeholder": "自定义链接后缀，可选",
-      "warning-text": "您确定要删除存储服务“{{name}}”吗？（此操作不可逆）"
+      "warning-text": "您确定要删除存储服务\"{{name}}\"吗？（此操作不可逆）"
     },
     "system": "系统",
     "system-section": {
@@ -397,7 +402,7 @@
   "tag": {
     "all-tags": "全部标签",
     "create-tag": "创建标签",
-    "create-tags-guide": "您可以通过输入 “#标签” 创建标签。",
+    "create-tags-guide": "您可以通过输入 \"#标签\" 创建标签。",
     "delete-confirm": "您确定要删除此标签吗?所有相关的备忘录将会被归档。",
     "delete-tag": "删除标签",
     "new-name": "新名称",
@@ -408,5 +413,43 @@
     "rename-success": "重命名成功",
     "rename-tag": "重命名",
     "rename-tip": "您的所有带有此标签的备忘录将被更新。"
+  },
+  "ai-platform": {
+    "empty-list": "暂无配置的 AI 平台",
+    "table": {
+      "name": "名称",
+      "type": "类型",
+      "url": "URL",
+      "model": "模型",
+      "description": "描述"
+    },
+    "form": {
+      "type": "平台类型",
+      "name": "显示名称",
+      "name-placeholder": "例如:OpenAI",
+      "url": "URL",
+      "url-placeholder": "https://api.example.com/v1",
+      "access-key": "访问密钥",
+      "access-key-placeholder": "输入 API 访问密钥",
+      "description": "描述",
+      "description-placeholder": "平台的可选描述",
+      "model": "模型",
+      "model-placeholder": "例如:deepseek-coder"
+    },
+    "add-title": "添加 AI 平台",
+    "edit-title": "编辑 AI 平台",
+    "delete-confirm-text": "确定要删除平台 \"{{name}}\" 吗？"
+  },
+  "ai": {
+    "validate": "验证",
+    "valid": "有效",
+    "invalid": "无效",
+    "platform-created": "平台创建成功",
+    "platform-create-failed": "创建平台失败",
+    "platform-updated": "平台更新成功",
+    "platform-update-failed": "更新平台失败",
+    "platform-deleted": "平台删除成功",
+    "platform-delete-failed": "删除平台失败",
+    "platform-generation-error": "生成答案时出错"
   }
 }
