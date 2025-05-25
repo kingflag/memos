@@ -19,6 +19,7 @@ type Store struct {
 	workspaceSettingCache *cache.Cache // cache for workspace settings
 	userCache             *cache.Cache // cache for users
 	userSettingCache      *cache.Cache // cache for user settings
+	aiPlatformCache       *cache.Cache // map[int]*AIPlatform
 }
 
 // New creates a new instance of Store.

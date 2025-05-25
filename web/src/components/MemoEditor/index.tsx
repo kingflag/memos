@@ -22,6 +22,7 @@ import { useTranslate } from "@/utils/i18n";
 import { convertVisibilityFromString } from "@/utils/memo";
 import DateTimeInput from "../DateTimeInput";
 import AddMemoRelationPopover from "./ActionButton/AddMemoRelationPopover";
+import AgentIntegrateOption from "./ActionButton/AgentIntegrateOption";
 import LocationSelector from "./ActionButton/LocationSelector";
 import MarkdownMenu from "./ActionButton/MarkdownMenu";
 import TagSelector from "./ActionButton/TagSelector";
@@ -508,6 +509,7 @@ const MemoEditor = observer((props: Props) => {
             <MarkdownMenu editorRef={editorRef} />
             <UploadAttachmentButton isUploading={state.isUploadingAttachment} />
             <AddMemoRelationPopover editorRef={editorRef} />
+            <AgentIntegrateOption editorRef={editorRef} />
             <LocationSelector
               location={state.location}
               onChange={(location) =>

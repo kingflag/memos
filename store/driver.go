@@ -80,6 +80,12 @@ type Driver interface {
 	ListReactions(ctx context.Context, find *FindReaction) ([]*Reaction, error)
 	DeleteReaction(ctx context.Context, delete *DeleteReaction) error
 
+	// AIPlatform model related methods.
+	CreateAIPlatform(ctx context.Context, create *AIPlatform) (*AIPlatform, error)
+	ListAIPlatforms(ctx context.Context, find *FindAIPlatform) ([]*AIPlatform, error)
+	UpdateAIPlatform(ctx context.Context, update *UpdateAIPlatform) error
+	DeleteAIPlatform(ctx context.Context, delete *DeleteAIPlatform) error
+
 	// Shortcut related methods.
 	ConvertExprToSQL(ctx *filter.ConvertContext, expr *exprv1.Expr) error
 }

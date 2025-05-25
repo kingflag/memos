@@ -1,4 +1,5 @@
 version: v2
+name: buf.build/usememos/memos
 deps:
   - buf.build/googleapis/googleapis
 lint:

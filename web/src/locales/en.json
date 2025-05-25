@@ -233,6 +233,11 @@
     "go-to-home": "Go to Home"
   },
   "setting": {
+    "ai-platform": "AI Platform",
+    "ai-platform-section": {
+      "title": "AI Platform Management",
+      "description": "Manage and configure AI platforms for your workspace"
+    },
     "access-token-section": {
       "access-token-copied-to-clipboard": "Access token copied to clipboard",
       "access-token-deletion": "Are you sure to delete access token {{accessToken}}? THIS ACTION IS IRREVERSIBLE.",
@@ -374,7 +379,7 @@
       "disable-markdown-shortcuts-in-editor": "Disable Markdown shortcuts in editor",
       "disable-password-login": "Disable password login",
       "disable-password-login-final-warning": "Please type \"CONFIRM\" if you know what you are doing.",
-      "disable-password-login-warning": "This will disable password login for all users. It is not possible to log in without reverting this setting in the database if your configured identity providers fail. You’ll also have to be extra careful when removing an identity provider",
+      "disable-password-login-warning": "This will disable password login for all users. It is not possible to log in without reverting this setting in the database if your configured identity providers fail. You'll also have to be extra careful when removing an identity provider",
       "disable-public-memos": "Disable public memos",
       "display-with-updated-time": "Display with updated time",
       "enable-auto-compact": "Enable auto compact",
@@ -426,5 +431,43 @@
     "rename-success": "Renamed tag successfully",
     "rename-tag": "Rename tag",
     "rename-tip": "All your memos with this tag will be updated."
+  },
+  "ai-platform": {
+    "empty-list": "No AI platforms configured yet",
+    "table": {
+      "name": "Name",
+      "platform-type": "Platform Type",
+      "url": "URL",
+      "model": "Model",
+      "description": "Description"
+    },
+    "form": {
+      "type": "Platform Type",
+      "name": "Display Name",
+      "name-placeholder": "e.g. OpenAI",
+      "url": "URL",
+      "url-placeholder": "https://api.example.com/v1",
+      "access-key": "Access Key",
+      "access-key-placeholder": "Enter API access key",
+      "description": "Description",
+      "description-placeholder": "Optional description of this platform",
+      "model": "Model",
+      "model-placeholder": "e.g. deepseek-coder"
+    },
+    "add-title": "Add AI Platform",
+    "edit-title": "Edit AI Platform",
+    "delete-confirm-text": "Are you sure you want to delete the platform \"{{name}}\"?"
+  },
+  "ai": {
+    "validate": "Validate",
+    "valid": "Valid",
+    "invalid": "Invalid",
+    "platform-created": "Platform created successfully",
+    "platform-create-failed": "Failed to create platform",
+    "platform-updated": "Platform updated successfully",
+    "platform-update-failed": "Failed to update platform",
+    "platform-deleted": "Platform deleted successfully",
+    "platform-delete-failed": "Failed to delete platform",
+    "platform-generation-error": "Error generating answer"
   }
 }
