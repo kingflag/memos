@@ -112,7 +112,7 @@ export interface UpdateAIPlatformRequest {
   /** The AI platform with updated fields */
   platform?: AIPlatform | undefined;
   /** The list of fields to update */
-  updateMask?: { paths: string[] } | undefined;
+  updateMask?: string[] | undefined;
 }
 
 /** Request message for DeleteAIPlatform */
@@ -508,7 +508,7 @@ export const GetAIPlatformRequest: MessageFns<GetAIPlatformRequest> = {
 };
 
 function createBaseUpdateAIPlatformRequest(): UpdateAIPlatformRequest {
-  return { platform: undefined, updateMask: { paths: [] } };
+  return { platform: undefined, updateMask: undefined };
 }
 
 export const UpdateAIPlatformRequest: MessageFns<UpdateAIPlatformRequest> = {
@@ -517,7 +517,7 @@ export const UpdateAIPlatformRequest: MessageFns<UpdateAIPlatformRequest> = {
       AIPlatform.encode(message.platform, writer.uint32(10).fork()).join();
     }
     if (message.updateMask !== undefined) {
-      FieldMask.encode({ paths: message.updateMask.paths }, writer.uint32(18).fork()).join();
+      FieldMask.encode(FieldMask.wrap(message.updateMask), writer.uint32(18).fork()).join();
     }
     return writer;
   },
@@ -542,8 +542,7 @@ export const UpdateAIPlatformRequest: MessageFns<UpdateAIPlatformRequest> = {
             break;
           }
 
-          const fieldMask = FieldMask.decode(reader, reader.uint32());
-          message.updateMask = { paths: fieldMask.paths };
+          message.updateMask = FieldMask.unwrap(FieldMask.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -563,7 +562,7 @@ export const UpdateAIPlatformRequest: MessageFns<UpdateAIPlatformRequest> = {
     message.platform = (object.platform !== undefined && object.platform !== null)
       ? AIPlatform.fromPartial(object.platform)
       : undefined;
-    message.updateMask = object.updateMask ? { paths: object.updateMask.paths || [] } : undefined;
+    message.updateMask = object.updateMask ?? undefined;
     return message;
   },
 };
